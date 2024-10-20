@@ -1,6 +1,8 @@
 #include "helpers.h"
 #include <math.h>
 
+void less_than_255(int *pixel_value);
+
 // Convert image to grayscale
 void grayscale(int height, int width, RGBTRIPLE image[height][width])
 {
@@ -506,4 +508,50 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
         }
     }
     return;
+}
+
+// Convert image to sepia
+void sepia(int height, int width, RGBTRIPLE image[height][width])
+{
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            /* Calculate sepia equivalent for the pixel and round it to nearest int
+             Also ensure the value does not go over 255 (the maximum value for an 8-bit color value) */
+
+            // Red
+            float sepiaRedtemp = .393 * image[i][j].rgbtRed + .769 * image[i][j].rgbtGreen + .189 * image[i][j].rgbtBlue;
+            int sepiaRed = round(sepiaRedtemp);
+
+            less_than_255(&sepiaRed);
+
+            // Green
+            float sepiaGreentemp = .349 * image[i][j].rgbtRed + .686 * image[i][j].rgbtGreen + .168 * image[i][j].rgbtBlue;
+            int sepiaGreen = round(sepiaGreentemp);
+
+            less_than_255(&sepiaGreen);
+
+            // Blue
+            float sepiaBluetemp = .272 * image[i][j].rgbtRed + .534 * image[i][j].rgbtGreen + .131 * image[i][j].rgbtBlue;
+            int sepiaBlue = round(sepiaBluetemp);
+
+            less_than_255(&sepiaBlue);
+
+            // Set final sepiaColor values to the pixel's RGB values
+            image[i][j].rgbtRed = sepiaRed;
+            image[i][j].rgbtGreen = sepiaGreen;
+            image[i][j].rgbtBlue = sepiaBlue;
+        }
+    }
+    return;
+}
+
+// Helper function to ensure the RGB value of a pixel does not go over 255 (the maximum value for an 8-bit color value)
+void less_than_255(int *pixel_value)
+{
+    if (*pixel_value > 255)
+    {
+        *pixel_value = 255;
+    }
 }
